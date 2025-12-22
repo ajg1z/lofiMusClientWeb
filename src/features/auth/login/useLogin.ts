@@ -4,26 +4,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface LoginCredentials {
-  email: string;
+  name: string;
   password: string;
 }
 
-// Моковая функция для логина
-async function mockLogin(
-  credentials: LoginCredentials
-): Promise<{ token: string }> {
-  // Имитация задержки сети
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+async function loginRequest(credentials: LoginCredentials): Promise<void> {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
 
-  // Моковая валидация
-  if (
-    credentials.email === "test@test.com" &&
-    credentials.password === "password"
-  ) {
-    return { token: "mock-jwt-token-12345" };
+  if (!res.ok) {
+    // Try read structured error; fallback to generic.
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "Неверное имя пользователя или пароль");
   }
-
-  throw new Error("Неверный email или пароль");
 }
 
 export function useLogin() {
@@ -36,12 +32,7 @@ export function useLogin() {
     setError(null);
 
     try {
-      const response = await mockLogin(credentials);
-
-      // Сохраняем токен (в реальном приложении используйте безопасное хранилище)
-      if (typeof window !== "undefined") {
-        localStorage.setItem("authToken", response.token);
-      }
+      await loginRequest(credentials);
 
       // Перенаправляем на главную страницу
       router.push("/");

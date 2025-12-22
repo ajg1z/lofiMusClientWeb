@@ -5,6 +5,7 @@ import { TextField, Button, Box, Alert, CircularProgress } from "@mui/material";
 import { useRegister } from "../useRegister";
 
 export function RegisterForm() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,7 +23,7 @@ export function RegisterForm() {
       return;
     }
 
-    await register({ email, password });
+    await register({ name, email, password });
   };
 
   return (
@@ -37,6 +38,18 @@ export function RegisterForm() {
         maxWidth: "400px",
       }}
     >
+      <TextField
+        id="name"
+        label="Name"
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+        fullWidth
+        placeholder="john_doe"
+        autoComplete="username"
+      />
+
       <TextField
         id="email"
         label="Email"

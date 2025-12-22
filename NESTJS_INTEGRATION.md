@@ -152,7 +152,14 @@ const data = await apiGet("/api/users", { page: 1, limit: 10 });
 
 ## ⭐ Рекомендации для удаленного бэкенда
 
-**Для удаленного NestJS бэкенда рекомендуется использовать React Query в клиентских компонентах:**
+**Для удаленного NestJS бэкенда “по‑взрослому” удобнее использовать BFF (прокси) + httpOnly cookie:**
+
+- Браузер никогда не хранит токен в `localStorage`
+- Access token хранится в `httpOnly` cookie (JS его не читает)
+- Запросы из UI идут на same-origin `"/api/*"` (Next.js route handlers)
+- Next.js на сервере подставляет `Authorization: Bearer <token>` при вызове удалённого API
+
+В этом репозитории прокси реализован в `src/app/api/auth/*`.
 
 ### Почему React Query, а не Server Actions?
 
@@ -193,7 +200,8 @@ const data = await apiGet("/api/users", { page: 1, limit: 10 });
 
 ### CORS ошибки
 
-Если получаете CORS ошибки при запросах из клиентских компонентов, настройте CORS в NestJS:
+Если вы ходите напрямую из браузера на удаленный API — настраивайте CORS в NestJS.
+Если используете BFF (`/api/*`) — CORS обычно не нужен, т.к. браузер общается с вашим Next.js same-origin.
 
 ```typescript
 // main.ts
