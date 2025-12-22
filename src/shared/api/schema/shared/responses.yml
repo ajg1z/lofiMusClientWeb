@@ -1,0 +1,67 @@
+responses:
+  Unauthorized:
+    description: Unauthorized - invalid or missing token
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
+        example:
+          statusCode: 401
+          message: Unauthorized
+          error: Unauthorized
+
+  InvalidCredentials:
+    description: Invalid credentials
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
+        example:
+          statusCode: 401
+          message: Invalid credentials
+          error: Unauthorized
+
+  BadRequest:
+    description: Bad request - validation error
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
+        example:
+          statusCode: 400
+          message:
+            - Name is required
+            - Invalid email format
+            - Password must be at least 6 characters
+          error: Bad Request
+
+  Conflict:
+    description: Conflict - user with this name or email already exists
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
+        example:
+          statusCode: 409
+          message: User with this name already exists
+          error: Conflict
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - statusCode
+        - message
+        - error
+      properties:
+        statusCode:
+          type: integer
+        message:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        error:
+          type: string

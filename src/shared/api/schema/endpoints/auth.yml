@@ -1,0 +1,194 @@
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User unique identifier
+        name:
+          type: string
+          description: User name
+        email:
+          type: string
+          format: email
+          description: User email address
+
+    LoginRequest:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: User name
+        password:
+          type: string
+          format: password
+          minLength: 1
+          description: User password
+
+    RegisterRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: User name (must be unique)
+        email:
+          type: string
+          format: email
+          description: User email address (must be unique)
+        password:
+          type: string
+          format: password
+          minLength: 6
+          description: User password (minimum 6 characters)
+
+    AuthResponse:
+      type: object
+      required:
+        - access_token
+        - user
+      properties:
+        access_token:
+          type: string
+          description: JWT access token
+        user:
+          $ref: '#/components/schemas/User'
+
+    LogoutResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Successfully logged out
+
+  responses:
+    LoginSuccess:
+      description: Login successful
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthResponse'
+          example:
+            access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            user:
+              id: 123e4567-e89b-12d3-a456-426614174000
+              name: john_doe
+              email: john@example.com
+
+    RegisterSuccess:
+      description: Registration successful
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthResponse'
+          example:
+            access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            user:
+              id: 123e4567-e89b-12d3-a456-426614174000
+              name: john_doe
+              email: john@example.com
+
+    LogoutSuccess:
+      description: Logout successful
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LogoutResponse'
+          example:
+            message: Successfully logged out
+
+    UserProfile:
+      description: User profile retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174000
+            name: john_doe
+            email: john@example.com
+
+login:
+  summary: Login user
+  description: Authenticate user with name and password
+  tags:
+    - Authentication
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/LoginRequest'
+        example:
+          name: john_doe
+          password: secretpassword123
+  responses:
+    '200':
+      $ref: '#/components/responses/LoginSuccess'
+    '401':
+      $ref: '../shared/responses.yml#/responses/InvalidCredentials'
+
+register:
+  summary: Register new user
+  description: Create a new user account
+  tags:
+    - Authentication
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/RegisterRequest'
+        example:
+          name: john_doe
+          email: john@example.com
+          password: secretpassword123
+  responses:
+    '201':
+      $ref: '#/components/responses/RegisterSuccess'
+    '400':
+      $ref: '../shared/responses.yml#/responses/BadRequest'
+    '409':
+      $ref: '../shared/responses.yml#/responses/Conflict'
+
+logout:
+  summary: Logout user
+  description: Logout current user (token remains valid until expiration)
+  tags:
+    - Authentication
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      $ref: '#/components/responses/LogoutSuccess'
+    '401':
+      $ref: '../shared/responses.yml#/responses/Unauthorized'
+
+me:
+  summary: Get current user profile
+  description: Get authenticated user's profile information
+  tags:
+    - Authentication
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      $ref: '#/components/responses/UserProfile'
+    '401':
+      $ref: '../shared/responses.yml#/responses/Unauthorized'

@@ -1,0 +1,42 @@
+openapi: 3.0.0
+info:
+  title: Lofi Music Client API
+  description: API for Lofi Music Client application
+  version: 1.0.0
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      $ref: "./endpoints/auth.yml#/components/schemas/User"
+    LoginRequest:
+      $ref: "./endpoints/auth.yml#/components/schemas/LoginRequest"
+    RegisterRequest:
+      $ref: "./endpoints/auth.yml#/components/schemas/RegisterRequest"
+    AuthResponse:
+      $ref: "./endpoints/auth.yml#/components/schemas/AuthResponse"
+    LogoutResponse:
+      $ref: "./endpoints/auth.yml#/components/schemas/LogoutResponse"
+    ErrorResponse:
+      $ref: "./shared/responses.yml#/components/schemas/ErrorResponse"
+
+paths:
+  /auth/login:
+    post:
+      $ref: "./endpoints/auth.yml#/login"
+
+  /auth/register:
+    post:
+      $ref: "./endpoints/auth.yml#/register"
+
+  /auth/logout:
+    post:
+      $ref: "./endpoints/auth.yml#/logout"
+
+  /auth/me:
+    get:
+      $ref: "./endpoints/auth.yml#/me"
