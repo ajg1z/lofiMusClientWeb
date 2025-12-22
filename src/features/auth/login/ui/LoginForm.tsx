@@ -5,13 +5,13 @@ import { TextField, Button, Box, Alert, CircularProgress } from "@mui/material";
 import { useLogin } from "../useLogin";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoading, error } = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login({ email, password });
+    await login({ name, password });
   };
 
   return (
@@ -27,15 +27,15 @@ export function LoginForm() {
       }}
     >
       <TextField
-        id="email"
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        id="name"
+        label="Name"
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         required
         fullWidth
-        placeholder="your@email.com"
-        autoComplete="email"
+        placeholder="john_doe"
+        autoComplete="username"
       />
 
       <TextField
